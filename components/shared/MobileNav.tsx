@@ -14,6 +14,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "../ui/button"
 import logo from "@/public/assets/images/logo-text.svg"
+import menu from "@/public/assets/icons/menu.svg"
 
 const MobileNav = () => {
     const pathname = usePathname()
@@ -34,7 +35,7 @@ const MobileNav = () => {
                     <Sheet>
                         <SheetTrigger>
                             <Image
-                                src="assets/icons/menu.svg"
+                                src={menu}
                                 alt="menu"
                                 width={32}
                                 height={32}
