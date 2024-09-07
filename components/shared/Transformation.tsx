@@ -27,6 +27,8 @@ import { CustomField } from "./CustomField"
 import { useState, useTransition } from "react"
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
 import { updateCredits } from "@/lib/actions/user.actions"
+import MediaUploader from "./MediaUploader"
+import TransformedImage from "./TransformedImage"
 
 export const formSchema = z.object({
   title: z.string(),
@@ -60,21 +62,19 @@ const Transformation = ({ action, data = null, userId, type, creditBalance, conf
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values)
   }
 
   const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey]
 
-    setImage((prevState : any) => ({
+    setImage((prevState: any) => ({
       ...prevState,
       aspectRation: imageSize.aspectRatio,
       width: imageSize.width,
-      height:imageSize.height,
+      height: imageSize.height,
     }))
-    
+
     setNewTransformation(transformationType.config);
 
     return onChangeField(value)
@@ -83,7 +83,7 @@ const Transformation = ({ action, data = null, userId, type, creditBalance, conf
 
   const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
     debounce(() => {
-      setNewTransformation((prevState: any)=> ({
+      setNewTransformation((prevState: any) => ({
         ...prevState,
         [type]: {
           ...prevState?.[type],
@@ -95,7 +95,7 @@ const Transformation = ({ action, data = null, userId, type, creditBalance, conf
 
   }
 
-  const onTransformationHandler = async() => {
+  const onTransformationHandler = async () => {
     setIsTransforming(true)
 
     setTransformationConfig(
@@ -105,7 +105,7 @@ const Transformation = ({ action, data = null, userId, type, creditBalance, conf
     setNewTransformation(null)
 
     startTransition(async () => {
-      // await updateCredits(userId,creditFee)
+      await updateCredits(userId,-1)
 
     })
 
@@ -198,28 +198,56 @@ const Transformation = ({ action, data = null, userId, type, creditBalance, conf
 
           </div>
         )}
+
+        <div className="media-uploader-field">
+          <CustomField
+            control={form.control}
+            name="publicID"
+            className="flex size-full flex-col"
+            render={({ field }) => (
+              <MediaUploader
+                onValueChange={field.onChange}
+                setImage={setImage}
+                publicID={field.value}
+                image={image}
+                type={type}
+              />
+            )}
+          />
+
+          <TransformedImage
+            image={image}
+            type={type}
+            title={form.getValues().title}
+            isTransforming={isTransforming}
+            setIsTransforming={setIsTransforming}
+            transformationConfig={transformationConfig}
+
+          />
+
+        </div>
         <div className="flex flex-col gap-4">
-        <Button
-          type="button"
-          className="submit-button capitalize"
-          disabled={isTransforming || newTransformation === null}
-          onClick={onTransformationHandler}
-        >
-          {isTransforming ? 'Transforming...' : 'Apply Transformation'}
-        </Button>
+          <Button
+            type="button"
+            className="submit-button capitalize"
+            disabled={isTransforming || newTransformation === null}
+            onClick={onTransformationHandler}
+          >
+            {isTransforming ? 'Transforming...' : 'Apply Transformation'}
+          </Button>
 
 
-        <Button
-          type="submit"
-          className="submit-button capitalize"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Submitting...' : 'Save Image'}
-        </Button>
+          <Button
+            type="submit"
+            className="submit-button capitalize"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Save Image'}
+          </Button>
 
         </div>
 
-       
+
 
 
 
