@@ -1,10 +1,11 @@
 import Header from '@/components/shared/Header'
 import React from 'react'
 import { transformationTypes } from '@/constants'
-import Transformation from '@/components/shared/Transformation';
+
 import { auth } from '@clerk/nextjs/server';
 import { getUserById } from '@/lib/actions/user.actions';
 import { redirect } from 'next/navigation';
+import Transformation from '@/components/shared/Transformation';
 
 
 const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps) => {
@@ -28,6 +29,7 @@ const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps)
           type={transformation.type as TransformationTypeKey}
           creditBalance={user.creditBalance}
         />
+ 
       </section>
 
     </>
